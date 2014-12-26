@@ -1,10 +1,10 @@
 import sys
 from random import random
+import argparse
 import pygame
 
 DEAD = 0
 ALIVE = 1
-CELL_SIZE = 5
 
 class LifeBoard:
     def __init__(self, x, y, alive_percent = .05):
@@ -71,6 +71,15 @@ class LifeBoard:
             pygame.display.flip()
             self.next_step()
  
-a = LifeBoard(128, 96)
+parser = argparse.ArgumentParser()
+parser.add_argument("--cellsize", "-c", type=int, default=5, help="the size of a cell")
+parser.add_argument("--percent_living", "-p", type=float, default=0.05, help="the percentage of living starting cells")
+parser.add_argument("--height", "-y", type=int, default=64, help="the height of the grid")
+parser.add_argument("--width", "-x", type=int, default=48, help="the width of the grid")
 
+args = parser.parse_args()
+
+CELL_SIZE = args.cellsize
+
+a = LifeBoard(args.height, args.width, args.percent_living)
 a.main()     
