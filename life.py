@@ -1,5 +1,5 @@
 import sys
-from random import choice
+from random import random
 import pygame
 
 DEAD = 0
@@ -7,10 +7,11 @@ ALIVE = 1
 CELL_SIZE = 5
 
 class LifeBoard:
-    def __init__(self, x, y):
+    def __init__(self, x, y, alive_percent = .05):
         self.width = x
         self.height = y
-        self.cells = [[choice([DEAD, ALIVE, DEAD, DEAD, DEAD, DEAD, DEAD, DEAD, DEAD]) for i in range(y)] for j in range(x)]
+        self.alive_percent = alive_percent
+        self.cells = [[self.cell_contents() for i in range(y)] for j in range(x)]
         pygame.init()
         self.screen = pygame.display.set_mode((x * CELL_SIZE, y * CELL_SIZE))
         self.clock = pygame.time.Clock()
@@ -19,6 +20,16 @@ class LifeBoard:
         for line in self.cells:
             string +=  str(line) + "\n"
         return string
+
+    def restart(self):
+        self.cells = [[self.cell_contents() for i in range(self.height)] for j in range(self.width)]
+
+    def cell_contents(self):
+        num = random()
+        if num <= self.alive_percent:
+            return ALIVE
+        else:
+            return DEAD
 
     def next_step(self):
         new_cells = [[0 for i in range(self.height)] for j in range(self.width)]
@@ -47,6 +58,11 @@ class LifeBoard:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: 
                     sys.exit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        self.restart()
+                    elif event.key == pygame.K_ESCAPE:
+                        sys.exit()
             self.screen.fill((0, 0, 0))
             for x in range(self.width):
                 for y in range(self.height):
